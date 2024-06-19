@@ -5,7 +5,9 @@
  */
 package io.debezium.time;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.temporal.TemporalAdjuster;
 
@@ -74,7 +76,11 @@ public class Timestamp {
             dateTime = dateTime.with(adjuster);
         }
 
-        return dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        if (value instanceof LocalTime || value instanceof LocalDateTime){
+            return dateTime.toInstant(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())).toEpochMilli();
+        } else {
+            return dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        }
     }
 
     private Timestamp() {
